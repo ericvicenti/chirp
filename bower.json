@@ -1,0 +1,14 @@
+{
+  "name": "chirp",
+  "version": "0.0.0",
+  "homepage": "https://github.com/ericvicenti/chirp",
+  "authors": [
+    "Eric Vicenti <eric@trapit.com>"
+  ],
+  "private": true,
+  "dependencies": {
+    "socket.io-client": "~0.9.16",
+    "momentjs": "~2.4.0",
+    "underscore": "~1.5.2"
+  }
+}
