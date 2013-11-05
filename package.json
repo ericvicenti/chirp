@@ -1,0 +1,13 @@
+{
+  "name": "chirp",
+  "version": "0.0.1",
+  "main": "src/server",
+  "dependencies": {
+    "underscore": "1.5.x",
+    "underscore.string": "2.3.x",
+    "q": "0.9.x",
+    "express": "3.4.x",
+    "sqlite3": "2.1.x",
+    "request": "2.27.x"
+  }
+}
