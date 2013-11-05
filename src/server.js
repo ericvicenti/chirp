@@ -5,8 +5,6 @@ var app = express();
 
 var config = require('../config');
 
-var db = require('./db');
-
 app.configure(function(){
   app.use(express.json());
   app.use(express.urlencoded());
@@ -15,13 +13,13 @@ app.configure(function(){
 
 var theValue = 'dude';
 
-app.get(function(req, res) {
+app.get('*', function(req, res) {
   res.send(theValue);
 });
 
-app.post(function(req, res) {
+app.post('*', function(req, res) {
   theValue = JSON.stringify(req.body);
-  res.send();
+  res.send(theValue);
 });
 
 app.listen(config.port, function(err) {
