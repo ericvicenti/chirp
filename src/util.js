@@ -11,8 +11,6 @@ _.Q = require('q');
 _.str = require('underscore.string');
 _.config = require('../config');
 
-_.bcrypt = require('bcrypt-nodejs');
-
 _.mixin({
   defer: function() {
     return _.Q.defer();
