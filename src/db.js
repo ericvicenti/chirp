@@ -12,7 +12,7 @@ db.start = function() {
   var start = _.defer();
   _db.run("CREATE TABLE IF NOT EXISTS users ( name TEXT PRIMARY KEY, displayName TEXT, phoneNumber TEXT, timeCreated INTEGER, secret TEXT)", function(err) {
     if(err) return start.reject(err);
-    _db.run("CREATE TABLE IF NOT EXISTS chats ( id INTEGER PRIMARY KEY AUTOINCREMENT, status TEXT, msg TEXT, timePosted INTEGER, sender TEXT, FOREIGN KEY(sender) REFERENCES users(name) )", function(err) {
+    _db.run("CREATE TABLE IF NOT EXISTS chats ( id INTEGER PRIMARY KEY AUTOINCREMENT, status TEXT, msg TEXT, timePosted INTEGER, sender TEXT, FOREIGN KEY(sender) REFERENCES users(name) ON DELETE CASCADE )", function(err) {
       if(err) return start.reject(err);
       _db.run("CREATE UNIQUE INDEX IF NOT EXISTS phoneNumber ON users (phoneNumber)", function(err) {
         if(err) return start.reject(err);
