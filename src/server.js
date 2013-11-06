@@ -74,22 +74,35 @@ function deliverMessage(chat, user) {
   return deliver.promise;
 }
 
+
+function sendInitialChats(socket) {
+  db.chats.list().then(function(chats) {
+    socket.emit('chats', chats.reverse());
+  }, function(err) {
+    console.log('cant get chats !', err);
+  });
+}
+
 var userSockets = {};
 
 io.sockets.on('connection', function (socket) {
   var user;
+  socket.on('signup', function (data) {
+    console.log('signup', data);
+    db.users.add(data.name, data.displayName, data.phoneNumber, data.secret).then(function(user) {
+      socket.emit('auth/success', user);
+      sendInitialChats(socket);
+    }, function(err) {
+      return socket.emit('auth/error', { msg: 'Invalid User' });
+    });
+  });
   socket.on('login', function (data) {
     db.users.get(data.name).then(function(u) {
       if(!u || u.secret != data.secret) return socket.emit('auth/error', { msg: 'Invalid Login' });
       user = u;
       userSockets[user.name] = socket;
       socket.emit('auth/success', user);
-
-      db.chats.list().then(function(chats) {
-        socket.emit('chats', chats);
-      }, function(err) {
-        console.log('cant get chats !', err);
-      });
+      sendInitialChats(socket);
     }, function(err) {
       return socket.emit('auth/error', { msg: 'Invalid Login' });
     });
@@ -97,6 +110,7 @@ io.sockets.on('connection', function (socket) {
   socket.on('chat', function (data) {
     if(!user) return socket.emit('chat/error', { msg: 'Invalid Authentication' });
     postChat(user, data.msg).then(function(chat) {
+      chat.displayName = user.displayName;
       socket.emit('chat/success', chat);
     }, function(err) {
       socket.emit('chat/error', { msg: err });
@@ -154,30 +168,6 @@ app.post('/hooks/message', function(req, res) {
     });
   }, function(err){
     console.log('could not find user with phone number: '+from);
-  });
-});
-
-app.get('/chats', function(req, res) {
-  db.chats.list().then(function(chats) {
-    res.send(chats);
-  }, function(err) {
-    res.send(500, err);
-  });
-});
-
-app.post('/chats', function(req, res) {
-  var msg = req.body.message;
-  var sender = req.body.sender;
-  var senderSecret = req.body.senderSecret;
-  db.users.get(sender).then(function(user) {
-    if (senderSecret != user.secret) return res.send(403, 'Bad secret');
-    postChat(user, msg).then(function(c) {
-      res.send(c);
-    }, function(err) {
-      res.send(500, 'Error posting chat: ', err);
-    });
-  }, function() {
-    res.send(403, 'Bad user');
   });
 });
 

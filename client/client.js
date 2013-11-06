@@ -12,6 +12,15 @@ $(function() {
     });
   }
 
+  function goSignup() {
+    socket.emit('signup', {
+      name: $('#signUpInputName').val(),
+      displayName: $('#signUpInputDisplayName').val(),
+      phoneNumber: $('#signUpInputPhoneNumber').val(),
+      secret: $('#signUpInputPassword').val()
+    });
+  }
+
   function listenForEnter(el, action) {
     el.bind("keypress", function(event) {
       if(event.which == 13) {
@@ -21,13 +30,18 @@ $(function() {
     });
   }
 
+  listenForEnter($("#signUpInputPassword"), goSignup);
+  $('#signUpButton').click(goSignup);
+
   listenForEnter($("#chatStartSecretInput"), goLogin);
   listenForEnter($("#chatStartNameInput"), goLogin);
   $('#chatStartButton').click(goLogin);
 
   socket.on('auth/success', function (user) {
     $('#userTitle').removeClass('hide').text(' - '+user.displayName);
-    $('#loginFormSection').remove();
+    $('#chatStartForm').remove();
+    $('#signupFormSection').remove();
+    $('#authenticatedNavBar').removeClass('hide');
     $('.chatUi').removeClass('hide');
     $('#chatSendInput').focus();
   });
@@ -35,7 +49,8 @@ $(function() {
   function addChat (chat) {
     var time = moment(new Date(chat.timePosted)).format('MMMM Do YYYY, h:mm:ss a');
     var timeEl = $('<span>').addClass('text-muted pull-right').text(time);
-    var titleEl = $('<h4>').text(chat.sender).append(timeEl);
+    var displayNameEl = $('<span>').addClass('text-muted').text(' - ' + chat.displayName);
+    var titleEl = $('<h4>').text(chat.sender).append(displayNameEl).append(timeEl);
     var msgEl = $('<div>').text(chat.msg);
     var chatEl = $('<div>').addClass('chatItem').append(titleEl, msgEl);
     $('#chatList').append(chatEl);
@@ -73,5 +88,10 @@ $(function() {
   $('#chatSendButton').click(goChat);
 
   $('#chatStartNameInput').focus();
+
+  $('#logoutButton').click(function(e) {
+    e.preventDefault();
+    window.location = '';
+  });
 
 });

@@ -47,7 +47,13 @@ db.users.add = function(name, displayName, phoneNumber, secret) {
     5: secret
   }, function(err) {
     if(err) return add.reject(err);
-    else return add.resolve();
+    else return add.resolve({
+      name: name,
+      displayName: displayName,
+      phoneNumber: phoneNumber,
+      timeCreated: now,
+      secret: secret
+    });
   })
   return add.promise;
 }
@@ -78,7 +84,7 @@ db.chats = {};
 
 db.chats.list = function() {
   var list = _.defer();
-  _db.all("SELECT * FROM chats", function(err, items) {
+  _db.all("SELECT msg, status, sender, timePosted, displayName FROM chats, users WHERE chats.sender = users.name ORDER BY timePosted DESC LIMIT 3", function(err, items) {
     if(err) return list.reject(err);
     else return list.resolve(items);
   });

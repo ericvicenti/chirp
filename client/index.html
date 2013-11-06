@@ -13,30 +13,57 @@
     <div class="container">
     
       <div class="header">
-<!--         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="#">Home</a></li>
-          <li><a href="#">About</a></li>
-          <li><a href="#">Contact</a></li>
-        </ul> -->
+        <ul class="nav nav-pills pull-right hide" id="authenticatedNavBar">
+          <li><a href="#" id="logoutButton">Log Out</a></li>
+        </ul>
+        <form class="form-inline pull-right" id="chatStartForm" role="form">
+          <div class="form-group">
+            <input type="text" class="form-control" id="chatStartNameInput" placeholder="Short Name">
+          </div>
+          <div class="form-group">
+            <input type="password" class="form-control" id="chatStartSecretInput" placeholder="Secret">
+          </div>
+          <button type="button" class="btn btn-success" id="chatStartButton">Log In</button>
+        </form>
         <h3>
           Chirp
           <span class="text-muted hide" id="userTitle"></span>
         </h3>
       </div>
 
-      <div class="jumbotron" id="loginFormSection">
-        <h1>Log In</h1>
-
-        <form class="form-inline" role="form">
+      <div id="signupFormSection">
+        <h1>Join Chirp!</h1>
+        <form class="form-horizontal" role="form">
           <div class="form-group">
-            <input type="text" class="form-control input-lg" id="chatStartNameInput" placeholder="Short Name">
+            <label for="signUpInputName" class="col-sm-2 control-label">Short Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="signUpInputName" placeholder="eu">
+            </div>
           </div>
           <div class="form-group">
-            <input type="password" class="form-control input-lg" id="chatStartSecretInput" placeholder="Secret">
+            <label for="signUpInputDisplayName" class="col-sm-2 control-label">Display Name</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="signUpInputDisplayName" placeholder="Example User">
+            </div>
           </div>
-          <button type="button" class="btn btn-lg btn-success" id="chatStartButton">Join</button>
+          <div class="form-group">
+            <label for="signUpInputPhoneNumber" class="col-sm-2 control-label">Phone Number</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="signUpInputPhoneNumber" placeholder="+15554443333">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="signUpInputPassword" class="col-sm-2 control-label">Password</label>
+            <div class="col-sm-10">
+              <input type="password" class="form-control" id="signUpInputPassword" placeholder="******">
+            </div>
+          </div>
+          <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+              <button type="button" class="btn btn-primary btn-lg" id="signUpButton">Sign Up!</button>
+            </div>
+          </div>
         </form>
-
       </div>
 
       <div class="row section chatData chatUi hide">
