@@ -80,11 +80,39 @@ db.users.getByPhoneNumber = function(number) {
   return get.promise; 
 }
 
+
+db.users.delete = function(name) {
+  var remove = _.defer();
+  _db.run("DELETE FROM users WHERE name LIKE ?", {
+    1: name
+  }, function(err) {
+    if(err) return remove.reject(err);
+    else return remove.resolve();
+  });
+  return remove.promise;
+}
+
 db.chats = {};
 
-db.chats.list = function() {
+db.chats.list = function(limit, before, after) {
   var list = _.defer();
-  _db.all("SELECT msg, status, sender, timePosted, displayName FROM chats, users WHERE chats.sender = users.name ORDER BY timePosted DESC LIMIT 3", function(err, items) {
+  var order = 'DESC';
+  var whereClause = '';
+  var sqlData = { 1: limit };
+  if (before) {
+    whereClause = ' AND timePosted < ? ';
+    sqlData = {
+      1: before,
+      2: limit
+    };
+  } else if (after) {
+    whereClause = ' AND timePosted > ? ';
+    sqlData = {
+      1: after,
+      2: limit
+    };
+  }
+  _db.all("SELECT msg, status, sender, timePosted, displayName FROM chats, users WHERE chats.sender = users.name "+whereClause+" ORDER BY timePosted "+order+" LIMIT ?", sqlData, function(err, items) {
     if(err) return list.reject(err);
     else return list.resolve(items);
   });

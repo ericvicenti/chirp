@@ -33,9 +33,12 @@ function sendSms(chat, user) {
 function postChat(user, msg) {
   var post = _.defer();
   db.chats.add(user.name, msg).then(function(chat) {
-    sendMessage(chat).then(function() {
-      post.resolve(chat);
-    }, post.reject);
+    post.resolve(chat);
+    sendMessage(chat).then(function(a) {
+      console.log('Message Sent! ', a, chat);    
+    }, function(err) {
+      console.log('Error sending message.. ', err);    
+    });
   }, post.reject);
   return post.promise;
 }
@@ -77,7 +80,7 @@ function deliverMessage(chat, user) {
 
 
 function sendInitialChats(socket) {
-  db.chats.list().then(function(chats) {
+  db.chats.list(10).then(function(chats) {
     socket.emit('chats', chats.reverse());
   }, function(err) {
     console.log('cant get chats !', err);
@@ -89,7 +92,6 @@ var userSockets = {};
 io.sockets.on('connection', function (socket) {
   var user;
   socket.on('signup', function (data) {
-    console.log('signup', data);
     db.users.add(data.name, data.displayName, data.phoneNumber, data.secret).then(function(user) {
       socket.emit('auth/success', user);
       sendInitialChats(socket);
@@ -109,8 +111,11 @@ io.sockets.on('connection', function (socket) {
     });
   });
   socket.on('chat', function (data) {
+    console.log("DATA ", data)
     if(!user) return socket.emit('chat/error', { msg: 'Invalid Authentication' });
     postChat(user, data.msg).then(function(chat) {
+      console.log("CHAT ", chat);
+
       chat.displayName = user.displayName;
       socket.emit('chat/success', chat);
     }, function(err) {
@@ -141,6 +146,22 @@ app.get('/', function(req, res) {
 app.get('/users', function(req, res) {
   db.users.list().then(function(users) {
     res.send(users);
+  }, function(err) {
+    res.send(500, err);
+  });
+});
+
+app.get('/users/:name', function(req, res) {
+  db.users.get(req.params.name).then(function(user) {
+    res.send(user);
+  }, function(err) {
+    res.send(500, err);
+  });
+});
+
+app.delete('/users/:name', function(req, res) {
+  db.users.get(req.params.name).then(function() {
+    res.send();
   }, function(err) {
     res.send(500, err);
   });

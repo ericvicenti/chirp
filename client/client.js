@@ -42,7 +42,8 @@ $(function() {
     $('#chatStartForm').remove();
     $('#signupFormSection').remove();
     $('#authenticatedNavBar').removeClass('hide');
-    $('.chatUi').removeClass('hide');
+    $('#chatFormFooter').removeClass('hide');
+    $('#chatData').removeClass('hide');
     $('#chatSendInput').focus();
   });
 
