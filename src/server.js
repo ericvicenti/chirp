@@ -56,6 +56,7 @@ function sendMessage(chat) {
 }
 
 function deliverMessage(chat, user) {
+  chat.displayName = user.displayName;
   var deliver = _.defer();
   var socket = userSockets[user.name]
   if(socket) {
